@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .dark {
+            background: #121212 !important;
+            color: white;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        .dark .chat-container {
+            background: #1e1e1e;
+        }
+
+        .header {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            background: #6a5acd;
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 10px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+        }
+
+        .user {
+            background: #6a5acd;
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot {
+            background: #e5e5ea;
+            color: black;
+            margin-right: auto;
+        }
+
+        .dark .bot {
+            background: #333;
+            color: white;
+        }
+
+        .input-box {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        button {
+            margin-left: 5px;
+            padding: 10px;
+            background: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a4bcf;
+        }
+
+        .typing {
+            font-style: italic;
+            opacity: 0.7;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+    <div class="header">
+        🤖 AI Chatbot 
+        <button onclick="toggleDark()" style="float:right;">🌙</button>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="input-box">
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="startVoice()">🎤</button>
+    </div>
+</div>
+
+<script>
+
+function toggleDark() {
+    document.body.classList.toggle("dark");
+}
+
+function sendMessage() {
+    let input = document.getElementById("userInput");
+    let message = input.value;
+
+    if (message.trim() === "") return;
+
+    let chatBox = document.getElementById("chatBox");
+
+    // User message
+    let userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.innerText = message;
+    chatBox.appendChild(userMsg);
+
+    input.value = "";
+
+    // Typing indicator
+    let typing = document.createElement("div");
+    typing.className = "message bot typing";
+    typing.innerText = "Typing...";
+    chatBox.appendChild(typing);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    fetch("/get", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "msg=" + message
+    })
+    .then(response => response.text())
+    .then(data => {
+        setTimeout(() => {
+            chatBox.removeChild(typing);
+
+            let botMsg = document.createElement("div");
+            botMsg.className = "message bot";
+            botMsg.innerText = data;
+            chatBox.appendChild(botMsg);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 800);
+    });
+}
+
+// Enter key support
+document.getElementById("userInput")
+.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+});
+
+// Voice input
+function startVoice() {
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+
+    recognition.onresult = function(event) {
+        let voiceText = event.results[0][0].transcript;
+        document.getElementById("userInput").value = voiceText;
+        sendMessage();
+    };
+
+    recognition.start();
+}
+
+</script>
+
+</body>
+</html>

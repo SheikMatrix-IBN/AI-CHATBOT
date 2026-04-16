@@ -1,0 +1,38 @@
+<aiml version="1.0.1" encoding="UTF-8">
+
+<category>
+    <pattern>HELLO</pattern>
+    <template>Hello! I am your AI chatbot.</template>
+</category>
+
+<category>
+    <pattern>WHAT IS AI</pattern>
+    <template>AI is the simulation of human intelligence.</template>
+</category>
+
+<category>
+    <pattern>BYE</pattern>
+    <template>Goodbye!</template>
+</category>
+
+<category>
+    <pattern>WHO CREATED YOU</pattern>
+    <template>I am created by SHEIK ABDULLAH.</template>
+</category>
+
+<category>
+    <pattern>* CREATOR *</pattern>
+    <template>I am created by SHEIK ABDULLAH.</template>
+</category>
+
+<category>
+    <pattern>* CREATED YOU *</pattern>
+    <template>I am created by SHEIK ABDULLAH.</template>
+</category>
+
+<category>
+    <pattern>TELL ME ABOUT YOUR CREATOR</pattern>
+    <template>My creator is SHEIK ABDULLAH, who developed me as an AI chatbot project.</template>
+</category>
+
+</aiml>
